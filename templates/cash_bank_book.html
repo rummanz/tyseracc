@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+    <title>Cash/Bank Book</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <h2>Cash/Bank Book Report</h2>
+    <p>From {{ start_date }} To {{ end_date }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Voucher No</th>
+                <th>Cheque No</th>
+                <th>Account</th>
+                <th>Remarks</th>
+                <th>Cash Paid In (TK)</th>
+                <th>Cash Paid Out (TK)</th>
+                <th>Cash Balance</th>
+                <th>Bank Paid In (TK)</th>
+                <th>Bank Paid Out (TK)</th>
+                <th>Bank Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in data %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.voucher_no }}</td>
+                <td>{{ entry.cheque }}</td>
+                <td>{{ entry.account }}</td>
+                <td>{{ entry.remarks }}</td>
+                <td>{{ entry.cash_paid_in }}</td>
+                <td>{{ entry.cash_paid_out }}</td>
+                <td>{{ entry.cash_balance }}</td>
+                <td>{{ entry.bank_paid_in }}</td>
+                <td>{{ entry.bank_paid_out }}</td>
+                <td>{{ entry.bank_balance }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endblock %}
+

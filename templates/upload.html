@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Import Accounts from CSV</h2>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('import_csv') }}">
+        <label for="file">Select CSV File:</label>
+        <input type="file" id="file" name="file" accept=".csv" required>
+        <button type="submit">Import</button>
+    </form>
+{% endblock %}

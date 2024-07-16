@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Add Account</h2>
+    <form method="post" action="{{ url_for('add_account') }}">
+        <label for="account_name">Account Name:</label>
+        <input type="text" id="account_name" name="account_name" required>
+
+        <label for="account_type">Account Type:</label>
+        <select id="account_type" name="account_type" required>
+            <option value="Assets">Assets</option>
+            <option value="Liabilities and Owners Equity">Liabilities and Owners Equity</option>
+            <option value="Income">Income</option>
+            <option value="Expenditure">Expenditure</option>
+        </select>
+
+        <label for="is_parent_account">
+            <input type="checkbox" id="is_parent_account" name="is_parent_account" value="yes" onchange="toggleParentAccountDropdown()"> Is this a parent account?
+        </label>
+
+        <div id="parent_account_div">
+            <label for="parent_account_id">Parent Account:</label>
+            <select id="parent_account_id" name="parent_account_id">
+                {% for account in parent_accounts %}
+                    <option value="{{ account[0] }}">{{ account[1] }}</option>
+                {% else %}
+                    <option disabled>No parent accounts available</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit">Add Account</button>
+    </form>
+
+    <h2>Accounts Tree View</h2>
+    <div id="treeview">
+        <!-- Tree view will be generated here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/get_accounts')
+                .then(response => response.json())
+                .then(data => {
+                    generateTreeView(data);
+                });
+        });
+        function toggleParentAccountDropdown() {
+            var checkBox = document.getElementById('is_parent_account');
+            var parentAccountDropdown = document.getElementById('parent_account_id');
+            if (checkBox.checked) {
+                parentAccountDropdown.disabled = true;
+            } else {
+                parentAccountDropdown.disabled = false;
+            }
+        }
+        function generateTreeView(accounts) {
+            const treeview = document.getElementById('treeview');
+            const categories = ['Assets', 'Liabilities and Owners Equity', 'Income', 'Expenditure'];
+
+            categories.forEach(category => {
+                const categoryNode = document.createElement('div');
+                categoryNode.classList.add('category-node');
+                categoryNode.innerHTML = `<strong>${category}</strong>`;
+                treeview.appendChild(categoryNode);
+
+                const ul = document.createElement('ul');
+                categoryNode.appendChild(ul);
+
+                const categoryAccounts = accounts.filter(acc => acc.account_type === category && !acc.parent_account_id);
+                categoryAccounts.forEach(account => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${account.account_name}`;
+                    ul.appendChild(li);
+
+                    const subUl = document.createElement('ul');
+                    li.appendChild(subUl);
+                    appendSubAccounts(subUl, account.account_id, accounts);
+                });
+            });
+        }
+
+        function appendSubAccounts(ul, parentId, accounts) {
+            const subAccounts = accounts.filter(acc => acc.parent_account_id === parentId);
+            subAccounts.forEach(account => {
+                const li = document.createElement('li');
+                li.innerHTML = `${account.account_name}`;
+                ul.appendChild(li);
+
+                const subUl = document.createElement('ul');
+                li.appendChild(subUl);
+                appendSubAccounts(subUl, account.account_id, accounts);
+            });
+        }
+    </script>
+    <style>
+        .category-node {
+            margin-top: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        ul ul {
+            margin-left: 20px;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Edit Transaction</h2>
+    <form method="post">
+        <div>
+            <label for="transaction_date">Date</label>
+            <input type="date" name="transaction_date" value="{{ transaction[1] }}" required>
+        </div>
+        <div>
+            <label for="account_id">Account</label>
+            <select name="account_id" required>
+                {% for account in accounts %}
+                <option value="{{ account[0] }}" {% if account[0] == transaction[2] %}selected{% endif %}>
+                    {{ account[1] }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="debit">Debit</label>
+            <input type="number" name="debit" step="0.01" value="{{ transaction[4] == 'debit' and transaction[3] or 0 }}">
+        </div>
+        <div>
+            <label for="credit">Credit</label>
+            <input type="number" name="credit" step="0.01" value="{{ transaction[4] == 'credit' and transaction[3] or 0 }}">
+        </div>
+        <button type="submit">Update Transaction</button>
+    </form>
+{% endblock %}

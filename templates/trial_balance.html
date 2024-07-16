@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Trial Balance from {{ start_date }} to {{ end_date }}</h2>
+    {% if data %}
+    <table>
+        <thead>
+            <tr>
+                <th>Account Name</th>
+                <th>Total Debit</th>
+                <th>Total Credit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for account_name, total_debit, total_credit in data %}
+            <tr>
+                <td>{{ account_name }}</td>
+                <td>{{ '{:,.2f}'.format(total_debit) }}</td>
+                <td>{{ '{:,.2f}'.format(total_credit) }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>{{ '{:,.2f}'.format(total_debit) }}</strong></td>
+                <td><strong>{{ '{:,.2f}'.format(total_credit) }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    {% endif %}
+{% endblock %}

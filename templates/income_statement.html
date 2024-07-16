@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Income Statement from {{ start_date }} to {{ end_date }}</h2>
+    <table>
+        <tr>
+            <th>Account Name</th>
+            <th>Account Type</th>
+            <th>Balance</th>
+        </tr>
+        {% for row in data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

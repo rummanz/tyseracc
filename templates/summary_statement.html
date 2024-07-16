@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Summary Statement</h2>
+    <table border="1">
+        <tr>
+            <th>Account Name</th>
+            <th colspan="2">Cash</th>
+            <th colspan="2">Bank</th>
+            <th colspan="2">Total</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>In Taka</td>
+            <td>Out Taka</td>
+            <td>In Taka</td>
+            <td>Out Taka</td>
+            <td>In Taka</td>
+            <td>Out Taka</td>
+        </tr>
+        {% for data in report_data %}
+        <tr>
+            <td>{{ data.account_name }}</td>
+            <td>{{ data.cash_in }}</td>
+            <td>{{ data.cash_out }}</td>
+            <td>{{ data.bank_in }}</td>
+            <td>{{ data.bank_out }}</td>
+            <td>{{ data.cash_in + data.bank_in }}</td>
+            <td>{{ data.cash_out + data.bank_out }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>Total</td>
+            <td>{{ totals.cash_in }}</td>
+            <td>{{ totals.cash_out }}</td>
+            <td>{{ totals.bank_in }}</td>
+            <td>{{ totals.bank_out }}</td>
+            <td>{{ totals.cash_in + totals.bank_in }}</td>
+            <td>{{ totals.cash_out + totals.bank_out }}</td>
+        </tr>
+    </table>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+{% endblock %}

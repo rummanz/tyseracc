@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>All Transactions</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Account Name</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction[1] }}</td> <!-- transaction_date -->
+                <td>{{ transaction[2] }}</td> <!-- account_name -->
+                <td>{% if transaction[4] == 'debit' %}{{ transaction[3] }}{% else %}0{% endif %}</td> <!-- debit -->
+                <td>{% if transaction[4] == 'credit' %}{{ transaction[3] }}{% else %}0{% endif %}</td> <!-- credit -->
+                <td>
+                    <a href="{{ url_for('edit_transaction', transaction_id=transaction[0]) }}">Edit</a>
+                    <form action="{{ url_for('delete_transaction', transaction_id=transaction[0]) }}" method="post" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: rgb(18, 0, 99);
+            text-align: center;
+        }
+        .section-title {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .total, .balance {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}

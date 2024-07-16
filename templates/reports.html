@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>View Reports</h2>
+    <form method="post" action="{{ url_for('view_reports') }}">
+        <label for="report_type">Report Type:</label>
+        <select id="report_type" name="report_type" required>
+            <option value="Ledger">Ledger</option>
+            <option value="Trial Balance">Trial Balance</option>
+            <option value="Balance Sheet">Balance Sheet</option>
+            <option value="Income Statement">Income Statement</option>
+            <option value="Cash Flow Statement">Cash Flow Statement</option>
+            <option value="Cash/Bank Book">Cash/Bank Book</option>
+            <option value="Summary Statement">Summary Statement</option>
+        </select>
+        
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        
+        <button type="submit">View Report</button>
+    </form>
+
+    {% if transactions %}
+        <h3>Transactions</h3>
+        <table>
+            <tr>
+                <th>Account Name</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Type</th>
+            </tr>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction[0] }}</td>
+                    <td>{{ transaction[1] }}</td>
+                    <td>{{ transaction[2] }}</td>
+                    <td>{{ transaction[3] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

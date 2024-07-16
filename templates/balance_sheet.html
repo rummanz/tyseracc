@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Balance Sheet from {{ start_date }} to {{ end_date }}</h2>
+    <table>
+        <thead>
+            <tr class="header">
+                <th>Accounts</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Assets Section -->
+            <tr class="section-title">
+                <td colspan="2">Assets</td>
+            </tr>
+            <!-- Current Assets -->
+            <tr class="section-title">
+                <td>Current Assets</td>
+                <td></td>
+            </tr>
+            {% for asset in data.assets if asset[2] == 'Current Assets' %}
+            <tr>
+                <td>{{ asset[0] }}</td>
+                <td>{{ '{:,.2f}'.format(asset[1]) }}</td>
+            </tr>
+            {% endfor %}
+            <!-- Fixed Assets -->
+            <tr class="section-title">
+                <td>Fixed Assets</td>
+                <td></td>
+            </tr>
+            {% for asset in data.assets if asset[2] == 'Fixed Assets' %}
+            <tr>
+                <td>{{ asset[0] }}</td>
+                <td>{{ '{:,.2f}'.format(asset[1]) }}</td>
+            </tr>
+            {% endfor %}
+            <!-- Other Assets -->
+            <tr class="section-title">
+                <td>Other Assets</td>
+                <td></td>
+            </tr>
+            {% for asset in data.assets if asset[2] == 'Other Assets' %}
+            <tr>
+                <td>{{ asset[0] }}</td>
+                <td>{{ '{:,.2f}'.format(asset[1]) }}</td>
+            </tr>
+            {% endfor %}
+            <!-- Total Assets -->
+            <tr class="total">
+                <td>Total Assets</td>
+                <td>{{ '{:,.2f}'.format(data.total_assets) }}</td>
+            </tr>
+
+            <!-- Liabilities Section -->
+            <tr class="section-title">
+                <td colspan="2">Liabilities</td>
+            </tr>
+            {% for liability in data.liabilities %}
+            <tr>
+                <td>{{ liability[0] }}</td>
+                <td>{{ '{:,.2f}'.format(liability[1]) }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="total">
+                <td>Total Liabilities</td>
+                <td>{{ '{:,.2f}'.format(data.total_liabilities) }}</td>
+            </tr>
+
+            <!-- Shareholder's Equity Section -->
+            <tr class="section-title">
+                <td colspan="2">Shareholder's Equity</td>
+            </tr>
+            {% for equity in data.equities %}
+            <tr>
+                <td>{{ equity[0] }}</td>
+                <td>{{ '{:,.2f}'.format(equity[1]) }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="total">
+                <td>Total Shareholder's Equity</td>
+                <td>{{ '{:,.2f}'.format(data.total_equities) }}</td>
+            </tr>
+
+            <!-- Total Liabilities & Shareholder's Equity -->
+            <tr class="total">
+                <td>Total Liabilities & Shareholder's Equity</td>
+                <td>{{ '{:,.2f}'.format(data.total_liabilities + data.total_equities) }}</td>
+            </tr>
+
+            <!-- Balance -->
+            <tr class="balance">
+                <td>Balance</td>
+                <td>{{ '{:,.2f}'.format(data.total_assets - (data.total_liabilities + data.total_equities)) }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: rgb(18, 0, 99);
+            text-align: center;
+        }
+        .section-title {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .total, .balance {
+            font-weight: bold;
+        }
+    </style>
+    {% endblock %}

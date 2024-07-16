@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Welcome to the Accounting Software</h2>
+    <p>This is the home page of your accounting software.</p>
+
+
+    <h2>Add Journal</h2>
+    <form method="post" action="{{ url_for('add_journal') }}">
+        
+        <div class="container text-center">
+
+        <div class="row justify-content-start py-2">
+
+            <div class="col-4 py-4">
+
+            <label for="transaction_date">Date:</label>
+            <input type="date" id="transaction_date" name="transaction_date" required>
+        </div>
+        <div class="col-4 py-4">
+            <label for="voucher_number">Voucher Number:</label>
+            <input type="text" id="voucher_number" name="voucher_number" required>
+        </div>
+    </div>
+
+                <div class="container text-center">
+
+        
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Check No</th>
+                    <th>Account Name</th>
+                    <th>Description</th>
+                    <th>Debit</th>
+                    <th>Credit</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="transactions_table">
+                <!-- Initial two rows -->
+                <tr>
+                    <td><input class="test001" type="text" name="cheque_0"></td>
+                    <td>
+                        <input type="text" id="account_name_0" name="account_name_0" oninput="showSuggestions(this, 0)" required>
+                        <input type="hidden" id="account_id_0" name="account_id_0" required>
+                        <div id="suggestions_0" class="suggestions"></div>
+                    </td>
+                    <td><input type="text" name="description_0"></td>
+                    <td><input type="number" name="debit_0" step="0.01"></td>
+                    <td><input type="number" name="credit_0" step="0.01"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="cheque_1"></td>
+                    <td>
+                        <input type="text" id="account_name_1" name="account_name_1" oninput="showSuggestions(this, 1)" required>
+                        <input type="hidden" id="account_id_1" name="account_id_1" required>
+                        <div id="suggestions_1" class="suggestions"></div>
+                    </td>
+                    <td><input type="text" name="description_1"></td>
+                    <td><input type="number" name="debit_1" step="0.01"></td>
+                    <td><input type="number" name="credit_1" step="0.01"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div> 
+
+    </div> 
+
+        <button type="button" onclick="addRow()" class="btn btn-outline-secondary">Add Row</button>
+        <button type="submit" class="btn btn-outline-primary">Save Journal</button>
+    </form>
+    
+    <script>
+        let rowCount = 2;
+
+        function addRow() {
+            const table = document.getElementById('transactions_table');
+            const newRow = table.insertRow();
+
+            newRow.innerHTML = `
+                <td><input type="text" name="cheque_${rowCount}"></td>
+                <td>
+                    <input type="text" id="account_name_${rowCount}" name="account_name_${rowCount}" oninput="showSuggestions(this, ${rowCount})" required>
+                    <input type="hidden" id="account_id_${rowCount}" name="account_id_${rowCount}" required>
+                    <div id="suggestions_${rowCount}" class="suggestions"></div>
+                </td>
+                <td><input type="text" name="description_${rowCount}"></td>
+                <td><input type="number" name="debit_${rowCount}" step="0.01"></td>
+                <td><input type="number" name="credit_${rowCount}" step="0.01"></td>
+                <td><button type="button" class="btn btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+            `;
+
+            rowCount++;
+        }
+
+        function removeRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        function showSuggestions(input, index) {
+            const query = input.value;
+            const suggestionsBox = document.getElementById(`suggestions_${index}`);
+
+            if (query.length < 2) {
+                suggestionsBox.innerHTML = '';
+                return;
+            }
+
+            fetch(`/api/accounts?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsBox.innerHTML = '';
+                    data.forEach(account => {
+                        const div = document.createElement('div');
+                        div.textContent = account.name;
+                        div.className = 'suggestion-item';
+                        div.onclick = () => selectAccount(account, index);
+                        suggestionsBox.appendChild(div);
+                    });
+                });
+        }
+
+        function selectAccount(account, index) {
+            document.getElementById(`account_name_${index}`).value = account.name;
+            document.getElementById(`account_id_${index}`).value = account.id;
+            document.getElementById(`suggestions_${index}`).innerHTML = '';
+        }
+    </script>
+
+    <style>
+        .test001 {
+            outline: none;
+            width: auto;
+        }
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            background-color: white;
+            z-index: 1000;
+        }
+
+        .suggestion-item {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+
+    </style>
+{% endblock %}

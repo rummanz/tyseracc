@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Ledger Report</h2>
+
+    {% for account_name, data in ledger.items() %}
+    <div class="ledger-section">
+        <h3>{{ account_name }}</h3>
+        <p>From {{ start_date }} To {{ end_date }}</p>
+        <div class="balance-bf">Balance B/F: {{ data.initial_balance | round(2) }}</div>
+        
+        <table class="ledger-table" border="1" cellpadding="10">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Voucher No.</th>
+                    <th>Description</th>
+                    <th>Debit Amount</th>
+                    <th>Credit Amount</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in data.transactions %}
+                <tr>
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.voucher_number }}</td>
+                    <td>{{ transaction.description }}</td>
+                    <td>{{ transaction.debit | round(2) }}</td>
+                    <td>{{ transaction.credit | round(2) }}</td>
+                    <td>{{ transaction.balance | round(2) }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3"><strong>Total</strong></td>
+                    <td><strong>{{ data.total_debit | round(2) }}</strong></td>
+                    <td><strong>{{ data.total_credit | round(2) }}</strong></td>
+                    <td><strong>{{ data.closing_balance | round(2) }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    {% endfor %}
+
+    <style>
+        /* Add this to your CSS file or within a <style> tag in the HTML */
+.ledger-section {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.ledger-section h3 {
+    margin-top: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.ledger-section p {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.balance-bf {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: #f9f9f9;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.ledger-table th, .ledger-table td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: left;
+}
+
+.ledger-table th {
+    background-color: #f2f2f2;
+}
+
+    </style>
+{% endblock %}
