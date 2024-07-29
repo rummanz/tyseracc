@@ -8,7 +8,8 @@ app = Flask(__name__)
 app.secret_key = 'siakdhlkasjdlksajfdl'
 
 def get_db_connection():
-    conn = psycopg2.connect(database="accdata", user="postgres", password="postgres")
+    #conn = psycopg2.connect(database="accdata", user="postgres", password="postgres")
+    conn = psycopg2.connect(user="postgres.pgcsropeslgzznelfnpy", password="duafe#AyUk9@HFQ", host="aws-0-ap-southeast-1.pooler.supabase.com", port="6543", database="postgres")
     return conn
 
 @app.route('/')
