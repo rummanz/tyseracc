@@ -4,7 +4,7 @@ from psycopg2 import sql
 def create_tables():
     commands = (
         """
-        CREATE TABLE accounts (
+        CREATE TABLE IF NOT EXISTS accounts (
             account_id VARCHAR PRIMARY KEY,
             account_name VARCHAR(255) NOT NULL,
             account_type VARCHAR(255) NOT NULL,
@@ -12,7 +12,7 @@ def create_tables():
         )
         """,
         """
-        CREATE TABLE transactions (
+        CREATE TABLE IF NOT EXISTS transactions (
             transaction_id SERIAL PRIMARY KEY,
             transaction_date DATE NOT NULL,
             account_id VARCHAR NOT NULL REFERENCES accounts(account_id),
@@ -24,19 +24,15 @@ def create_tables():
         )
         """
     )
-    conn = None
+    
     try:
-        conn = psycopg2.connect(database="accdata", user="postgres", password="postgres")
-        cur = conn.cursor()
-        for command in commands:
-            cur.execute(command)
-        conn.commit()
-        cur.close()
+        with psycopg2.connect(user="postgres.pgcsropeslgzznelfnpy", password="duafe#AyUk9@HFQ", host="aws-0-ap-southeast-1.pooler.supabase.com", port="6543", database="postgres") as conn:
+            with conn.cursor() as cur:
+                for command in commands:
+                    cur.execute(command)
+                conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
+        print(f"Error creating tables: {error}")
 
 def insert_data():
     data = [
@@ -75,7 +71,7 @@ def insert_data():
         ("1f7544a7-982b-4463-b092-9d9bd0f99e8f", "405. Communication Expenses", "Expenditure", None),
         ("7a5593a2-b426-41c9-b893-dc7041835957", "406. Mobile Expenses", "Expenditure", None),
         ("bd62d8dd-bb43-49b7-afdd-e33289c26ec3", "B-1140. Motor Vehicle Maintenance", "Expenditure", "16c90d71-e2b3-42ec-a170-bde0a4258052"),
-        ("cd0b3779-defc-4072-8e20-ef74eb75d96b", "B-1150. Motor Vehicle Fuel Cost (+ Security Deposit)", "Expenditure" "16c90d71-e2b3-42ec-a170-bde0a4258052"),
+        ("cd0b3779-defc-4072-8e20-ef74eb75d96b", "B-1150. Motor Vehicle Fuel Cost (+ Security Deposit)", "Expenditure", "16c90d71-e2b3-42ec-a170-bde0a4258052"),
         ("7655b99b-d22c-452a-bd32-cdbf5ce0d701", "B-1151. Lease & Lease Repayments", "Expenditure", "16c90d71-e2b3-42ec-a170-bde0a4258052"),
         ("688c08de-1b4b-4cd3-8c9e-6cd215abf8f6", "X-0982. Motor Vehicle Fuel Cost (CEO Vehicle)", "Expenditure", "16c90d71-e2b3-42ec-a170-bde0a4258052"),
         ("8c02cc2b-0f10-40e6-aeae-494e882a2e19", "A-1100. Inspection & Survey Expenses", "Expenditure", "5c92ef49-d7bc-4e68-9944-bbdbc7ec28c4"),
@@ -126,7 +122,7 @@ def insert_data():
         ("84bcf0d3-06f7-42fe-b391-993cac39e299", "B-2100. Communication Maintenance", "Expenditure", "da94895d-663d-4dba-86bf-8e70ca0a17b7"),
         ("8910fb7b-93ea-4a9a-98fe-1f3f4cd18ced", "B-4030. Corporate Gift", "Expenditure", "da94895d-663d-4dba-86bf-8e70ca0a17b7"),
         ("28f0e631-daf3-442d-8339-69080e10a633", "B-1830. Audit Fees", "Expenditure", "da94895d-663d-4dba-86bf-8e70ca0a17b7"),
-        ("2c0bfbd3-b740-4744-a6f1-f0f4567f8893", "B-1310. Training - External Courses", "Expenditure" "da94895d-663d-4dba-86bf-8e70ca0a17b7"),
+        ("2c0bfbd3-b740-4744-a6f1-f0f4567f8893", "B-1310. Training - External Courses", "Expenditure", "da94895d-663d-4dba-86bf-8e70ca0a17b7"),
         ("975817c8-a863-459a-b32e-86ce643cd370", "B-2910. Moving Cost", "Expenditure", "da94895d-663d-4dba-86bf-8e70ca0a17b7"),
         ("fb5d1a06-1f8d-412d-a571-7ad7ff7e1083", "B-101601. Expense AIT (Office Staff Salary)", "Expenditure", "ebc51a7a-b05c-4507-84f4-4aa82b92f306"),
         ("fe9fcdf9-1a9c-41d9-80e6-21f0e2fb9ef5", "B-280101. Expense AIT (Office Rent)", "Expenditure", "ebc51a7a-b05c-4507-84f4-4aa82b92f306"),
@@ -145,25 +141,21 @@ def insert_data():
         ("07bc8bb2-dce6-46e1-9702-0e72e08ebd62", "O-4000. Debtors", "Assets", "01bcbce1-2b44-4007-9742-e5e7fd0ee4f5"),
         ("94320e13-7df6-478e-95e6-5c38d1417c3a", "TA-10601. Prepayments", "Assets", "cbe123fb-113f-48b5-9401-ad9c7c0720df"),
         ("99209e91-b92c-44e7-a4bc-4dc097f30e68", "B-2802. Office Rent Advance", "Assets", "cbe123fb-113f-48b5-9401-ad9c7c0720df"),
-        ("ee110d05-69e2-45f3-bd76-c244becc0997", "TA-10701. AIT (Client Side)", "Assets", "9b92c032-ed18-4fe2-9603-8153145b06c1"),
-    ] 
+        ("ee110d05-69e2-45f3-bd76-c244becc0997", "TA-10701. AIT (Client Side)", "Assets", "9b92c032-ed18-4fe2-9603-8153145b06c1")
+    ]
     
-    conn = None
+    query = sql.SQL(
+        "INSERT INTO accounts (account_id, account_name, account_type, parent_account_id) "
+        "VALUES (%s, %s, %s, %s)"
+    )
+
     try:
-        conn = psycopg2.connect(database="accdata", user="postgres", password="postgres")
-        cur = conn.cursor()
-        insert_query = """
-        INSERT INTO accounts (account_id, account_name, account_type, parent_account_id) 
-        VALUES (%s, %s, %s, %s)
-        """
-        cur.executemany(insert_query, data)
-        conn.commit()
-        cur.close()
+        with psycopg2.connect(user="postgres.pgcsropeslgzznelfnpy", password="duafe#AyUk9@HFQ", host="aws-0-ap-southeast-1.pooler.supabase.com", port="6543", database="postgres") as conn:
+            with conn.cursor() as cur:
+                cur.executemany(query, data)
+                conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
+        print(f"Error inserting data: {error}")
 
 if __name__ == '__main__':
     create_tables()
